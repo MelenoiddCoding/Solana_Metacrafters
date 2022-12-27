@@ -7,6 +7,7 @@ import {
   Transaction,
 } from "@solana/web3.js";
 import {useEffect , useState } from "react";
+import { disconnect } from 'process';
 
 // create types
 type DisplayEncoding = "utf8" | "hex";
@@ -61,6 +62,8 @@ function App() {
   undefined
   );
 
+  const [walletAccount, setWalletAccount] = useState('')
+
   // this is the function that runs whenever the component updates (e.g. render, refresh)
   useEffect(() => {
 	  const provider = getProvider();
@@ -84,6 +87,7 @@ function App() {
 				// connects wallet and returns response which includes the wallet public key
         const response = await solana.connect();
         console.log('wallet account ', response.publicKey.toString());
+        setWalletAccount(response.publicKey.toString())
 				// update walletKey to be the public key
         setWalletKey(response.publicKey.toString());
       } catch (err) {
@@ -92,13 +96,29 @@ function App() {
     }
   };
 
+  const disconnectWallet = async () =>  {
+    // @ts-ignore
+    const {solana} = window
+    console.log(solana);
+    if (solana){
+      try{
+        await solana.disconnect();
+        setWalletKey(undefined)
+      } catch (err){
+      // { code: 4001, message: 'User rejected the request.' }
+      }
+    }
+    
+  };
+
 	// HTML code for the app
   return (
     <div className="App">
-      <header className="App-header">
-        <h2>Connect to Phantom Wallet</h2>
-      </header>
       {provider && !walletKey && (
+        <div>
+          <header className="App-header">
+          <h2>Connect to Phantom Wallet</h2>
+        </header>
           <button
             style={{
               fontSize: "16px",
@@ -110,8 +130,25 @@ function App() {
           >
             Connect Wallet
           </button>
+        </div>
         )}
-        {provider && walletKey && <p>Connected account</p> }
+        {provider && walletKey && 
+          <div>
+            <p>{walletAccount}</p>
+            <p>Connected account</p> 
+            <button
+            style={{
+              fontSize: "16px",
+              padding: "15px",
+              fontWeight: "bold",
+              borderRadius: "5px",
+            }}
+            onClick={disconnectWallet}
+          >
+            Disconnect wallet
+          </button>
+          </div>
+        }
 
         {!provider && (
           <p>
