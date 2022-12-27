@@ -1,4 +1,4 @@
-//Generated KeyPair for excersises and testing cases
+//Generated KeyPair for excersises and testing purposes
 
 const pair =  {
      publicKey: [
@@ -18,5 +18,8 @@ const pair =  {
 
     } 
 
-export {pair}
+//Wallet adress for devnet purposes
+const walletAdress = "14WYVhNQV9hHqU8rdpsZf53A2NZWQUHWvMvvBQ29WwXH"
+
+export {pair, walletAdress}
 
